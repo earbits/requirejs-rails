@@ -133,6 +133,11 @@ module Requirejs::Rails
       if url = cfg.delete('baseUrl')
         raise Requirejs::ConfigError, "baseUrl is not needed or permitted in the configuration"
       end
+      
+      ## base config file needs to be absolute
+      if main_cfg_file = cfg.delete('mainConfigFile')
+        cfg['mainConfigFile'] = source_path(main_cfg_file).to_s
+      end
       self[:user_config] = cfg
     end
 
@@ -155,6 +160,10 @@ module Requirejs::Rails
     
     def get_binding
       return binding()
+    end
+    
+    def source_path(path)
+      (self.source_dir + path).cleanpath
     end
 
     def asset_allowed?(asset)
