@@ -22,6 +22,7 @@ module Requirejs::Rails
       self.rjs_path   = self.bin_dir+'r.js'
 
       self.loader = :requirejs
+      self.follow_dependencies = false
 
       self.driver_template_path = Pathname.new(__FILE__+'/../rjs_driver.js.erb').cleanpath
       self.driver_path = self.tmp_dir + 'rjs_driver.js'
@@ -93,6 +94,10 @@ module Requirejs::Rails
       end
       self[:loader] = sym
     end
+    
+    def follow_dependencies=(val)
+      self[:follow_dependencies] = val
+    end
 
     def build_config
       unless self.has_key?(:build_config)
@@ -144,6 +149,10 @@ module Requirejs::Rails
       self.target_dir+(module_name_for(mod)+'.js')
     end
 
+    def module_names
+      self.build_config["modules"].map {|mod| mod["name"]}
+    end
+    
     def get_binding
       return binding()
     end

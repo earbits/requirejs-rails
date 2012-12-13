@@ -1,4 +1,5 @@
 require 'requirejs/rails/config'
+require 'requirejs/dependency_builder'
 
 require 'pathname'
 

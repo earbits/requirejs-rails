@@ -89,14 +89,41 @@ EOM
     task :prepare_source => ["requirejs:setup",
                              "requirejs:clean"] do
       requirejs.config.source_dir.mkpath
-      requirejs.env.each_logical_path do |logical_path|
-        next unless requirejs.config.asset_allowed?(logical_path)
-        if asset = requirejs.env.find_asset(logical_path)
+      
+      if requirejs.config.follow_dependencies
+        ## User depend_on and require directioves to identify 
+        ## assets to copy over as source
+        
+        adapter = Requirejs::DependencyBuilder::SprocketsAdapter.new(requirejs.env)
+        builder = Requirejs::DependencyBuilder.new(adapter)
+        
+        ## seed assets based off of module names
+        requirejs.config.module_names.each do |mod_name|
+          builder.include(mod_name + ".js")
+        end
+      
+        ## copy assets
+        builder.dependencies.each do |asset|
+          next unless requirejs.config.asset_allowed?(asset.logical_path)
+          
           filename = requirejs.config.source_dir + asset.logical_path
           filename.dirname.mkpath
           asset.write_to(filename)
         end
+        
+      else
+        ## Copy all allowable assets as source
+        requirejs.env.each_logical_path do |logical_path|
+          next unless requirejs.config.asset_allowed?(logical_path)
+          if asset = requirejs.env.find_asset(logical_path)
+            filename = requirejs.config.source_dir + asset.logical_path
+            filename.dirname.mkpath
+            asset.write_to(filename)
+          end
+        end
+        
       end
+      
     end
 
     task :generate_rjs_driver => ["requirejs:setup"] do

@@ -167,6 +167,37 @@ define(function (require) {
 config.requirejs.logical_asset_filter += [/\.templ$/]
 ```
 
+### Filter build-time assets by sprocket directives
+
+By default, all assets allowed by the above asset filter will be made available
+to the build. This includes assets in third party gems, which may require the 
+environment to be loaded, or assets not intended to be included in the 
+pre-compile process.  
+
+The `follow_dependencies` config setting may be used to restrict the available
+assets to Sprockets dependencies and sub-dependencies as defined in your 
+top-level modules.
+
+```ruby
+# in config/application.rb
+config.requirejs.follow_dependencies = true
+```
+Use the Sprockets dependency directives to explicitly specify the required 
+file dependencies and `requirejs-rails` will restrict the available assets to 
+those found in the Sprockets dependency tree.  
+
+```javascript
+// in app/assets/javascripts/myapp.js
+//= depend_on my_module
+define(["my_module"], function (require) {
+  // ...
+});
+```
+
+This can be useful when setting up `requirejs-rails` within an existing 
+environment we all assets cannot be immediately ported to AMD modules. 
+
+
 ## Advanced features
 
 ### Additional data attributes

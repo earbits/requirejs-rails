@@ -100,6 +100,15 @@ class RequirejsRailsConfigTest < ActiveSupport::TestCase
     end
     assert_match /requires exactly one module/, exc.message
   end
+  
+  ## follow dependencies
+  test "follow_dependencies should be false by default" do
+    assert_equal false, @cfg.follow_dependencies
+  end
+  test "follow_dependencies should be settable" do
+    @cfg.follow_dependencies = true
+    assert_equal true, @cfg.follow_dependencies
+  end
 end
 
 class RequirejsHelperTest < ActionView::TestCase
