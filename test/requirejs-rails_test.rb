@@ -151,11 +151,6 @@ class RequirejsHelperTest < ActionView::TestCase
     assert_select "script:last-of-type[src^=/javascripts/require.js][data-class^=TestController]", :count => 1
   end
 
-  test "requirejs_include_tag can appear only once" do
-    assert_raises Requirejs::MultipleIncludeError do
-      render :text => "#{requirejs_include_tag}\n#{requirejs_include_tag}"
-    end
-  end
 
   test "requirejs_include_tag with digested asset paths" do
     begin
