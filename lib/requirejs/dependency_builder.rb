@@ -60,10 +60,10 @@ module Requirejs
     def dependency_paths
       cached_paths.to_a
     end
-    def dependencies
-      cached_paths.map do |path|
-        env.find_asset(path)
-      end
+    
+    def each(&block)
+      cached_paths.each(&block)
     end
+    
   end
 end

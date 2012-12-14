@@ -35,7 +35,7 @@ describe Requirejs::DependencyBuilder do
     
   end
   
-  it "should return cached dependecies" do
+  it "should enumerate cached dependecies" do
     
     @adapter.stub(:find_asset).with("my_path.js").and_return("stub_a")
     @adapter.stub(:find_asset).with("my_dependant_path.js").and_return("stub_b")
@@ -45,8 +45,16 @@ describe Requirejs::DependencyBuilder do
     builder = Requirejs::DependencyBuilder.new(@adapter)
     builder.include("my_path.js")
     
+    dependencies = []
+    builder.each do |j|
+      dependencies << j
+    end
     
-    builder.dependencies.sort.should eql(%w{ stub_a stub_b stub_c stub_d })
+    
+    dependencies.should include("my_path.js")
+    dependencies.should include("my_dependant_path.js")
+    dependencies.should include("my_other_dependant_path.js")
+    dependencies.should include("my_third_dependant_path.js")
   end
   
   

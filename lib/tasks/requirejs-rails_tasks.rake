@@ -103,8 +103,10 @@ EOM
         end
       
         ## copy assets
-        builder.dependencies.each do |asset|
-          next unless requirejs.config.asset_allowed?(asset.logical_path)
+        builder.each do |logical_path|
+          next unless requirejs.config.asset_allowed?(logical_path)
+          
+          asset = adapter.find_asset(logical_path)  
           
           filename = requirejs.config.source_dir + asset.logical_path
           filename.dirname.mkpath
