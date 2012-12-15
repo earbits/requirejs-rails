@@ -1,3 +1,3 @@
-if defined? Rails::Railtie
-  require 'requirejs/railtie'
+if defined? Rails::Engine
+  require 'requirejs/engine'
 end

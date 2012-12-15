@@ -23,6 +23,7 @@ module Requirejs::Rails
 
       self.loader = :requirejs
       self.follow_dependencies = false
+      self.include_paths = true
 
       self.driver_template_path = Pathname.new(__FILE__+'/../rjs_driver.js.erb').cleanpath
       self.driver_path = self.tmp_dir + 'rjs_driver.js'
@@ -158,6 +159,8 @@ module Requirejs::Rails
       self.build_config["modules"].map {|mod| mod["name"]}
     end
     
+    
+    
     def get_binding
       return binding()
     end
@@ -170,6 +173,37 @@ module Requirejs::Rails
       self.logical_asset_filter.reduce(false) do |accum, matcher|
         accum || (matcher =~ asset)
       end ? true : false
+    end
+    
+   
+    
+    def load_user_config!
+      # Location of the user-supplied config parameters, which will be
+      # merged with the default params.  It should be a YAML file with
+      # a single top-level hash, keys/values corresponding to require.js
+      # config parameters.
+      user_config_file = ::Rails.root + "config/requirejs.yml"
+      
+      if user_config_file.exist?
+        self.user_config = YAML::load(user_config_file.read)
+      end
+    end
+    
+    def has_require_config?
+      !user_config.empty?
+    end
+    
+    def include_paths?
+      self.include_paths
+    end
+    
+    def require_config
+      run_config
+    end
+    
+    
+    def script_tags(main_module, options = {}, &block)
+      Requirejs::Strategies::Requirejs.new(self, main_module, options, block).to_html
     end
   end
 end
