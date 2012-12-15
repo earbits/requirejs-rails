@@ -1,5 +1,3 @@
-module Requirejs
-  module Rails
-    require 'requirejs/rails/engine'
-  end
+if defined? Rails::Railtie
+  require 'requirejs/railtie'
 end

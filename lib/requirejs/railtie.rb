@@ -1,11 +1,14 @@
+require "action_controller/railtie"
+
 require 'requirejs/rails/config'
 require 'requirejs/dependency_builder'
+
+require 'requirejs/rails/helper'
 
 require 'pathname'
 
 module Requirejs
-  module Rails
-    class Engine < ::Rails::Engine
+  class Railtie < ::Rails::Railtie
 
       ### Configuration setup
       config.before_configuration do |app|
@@ -48,7 +51,29 @@ module Requirejs
           config.assets.digests.merge!(rjs_digests)
         end
       end
+      
+    ## 
+    
+    rake_tasks do |app|
+      require 'requirejs/rails/task'
 
-    end # class Engine
-  end
+      Requirejs::Rails::Task.new 
+      # do |t|
+      #   t.environment = lambda { app.assets }
+      #   t.output      = File.join(app.root, 'public', app.config.assets.prefix)
+      #   t.assets      = app.config.assets.precompile
+      #   t.cache_path  = "#{app.config.root}/tmp/cache/assets"
+      # end
+    end
+      
+    config.after_initialize do |app|
+      config = app.config
+      
+      ActiveSupport.on_load(:action_view) do
+        include Requirejs::Rails::Helper
+      end
+    end
+
+  end # class Railtie
 end
+
