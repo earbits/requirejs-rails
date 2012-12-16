@@ -15,8 +15,7 @@ module Requirejs
         config.requirejs = Requirejs::Rails::Config.new #::Rails.root
         config.requirejs.precompile = [/require\.js$/]
  
-        config.requirejs.load_user_config!
-
+      
       end
       
       

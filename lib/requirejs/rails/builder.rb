@@ -3,16 +3,18 @@ require 'requirejs/rails'
 require 'pathname'
 require 'ostruct'
 
+require 'erubis'
+
 module Requirejs::Rails
   class Builder
-    # config should be an instance of Requirejs::Rails::Config
+    # config should be an instance of Requirejs::Config::Build
     
     def initialize(config)
       @config = config
     end
     
     def build      
-      @config.tmp_dir
+      @config.paths.tmp
     end
 
     def digest_for(path)
@@ -20,8 +22,8 @@ module Requirejs::Rails
     end
 
     def generate_rjs_driver
-      templ = Erubis::Eruby.new(@config.driver_template_path.read)
-      @config.driver_path.open('w') do |f|
+      templ = Erubis::Eruby.new(@config.paths.driver_template.read)
+      @config.paths.driver.open('w') do |f|
         f.write(templ.result(@config.get_binding))
       end
     end

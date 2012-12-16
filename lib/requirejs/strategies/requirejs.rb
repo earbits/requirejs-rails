@@ -1,6 +1,8 @@
 require "active_support"
 require "active_support/core_ext/object/to_json"
 
+require "requirejs/config/runtime"
+
 module Requirejs
   module Strategies
     class Requirejs
@@ -15,8 +17,8 @@ module Requirejs
       def to_html
           html = ""
           
-          if require_config_needed?
-            html.concat "<script>var require = #{require_config.to_json};</script>\n"
+          if runtime_config_needed?
+            html.concat "<script>var require = #{runtime_config.to_json};</script>\n"
           end
           
           # add require.js script call
@@ -37,22 +39,23 @@ module Requirejs
       def use_digest?; @use_digest; end
       def include_paths?; @config.include_paths?; end
       
-      def require_config_needed?
-        @config.has_require_config? || use_digest?
+      def runtime_config_needed?
+        @config.has_runtime_config? || use_digest?
       end
       
-      def require_config
+      def runtime_config
         
-        config = (@config.require_config || {}).dup
+        config = (@config.runtime_config || {}).dup
         
         
         unless include_paths?
            config["paths"] ||= {}
            
            modules = @config.module_names
+           require_paths = @config.require_paths
            
            # filter out paths
-           config["paths"].select! {|mod,path| modules.include?(mod)  || is_url?(path)}
+           config["paths"].select! {|mod,path| modules.include?(mod) || require_paths.include?(mod) || is_url?(path)}
         end
             
         if use_digest? 

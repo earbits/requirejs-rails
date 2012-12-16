@@ -56,8 +56,8 @@ module Requirejs
 
             # Preserve the original asset paths, as we'll be manipulating them later
             requirejs.env_paths = requirejs.env.paths.dup
-            requirejs.config = ::Rails.application.config.requirejs
-            requirejs.builder = Requirejs::Rails::Builder.new(requirejs.config)
+            requirejs.config = ::Rails.application.config.requirejs.build_config
+            requirejs.builder = Requirejs::Rails::Builder.new(requirejs.build_config)
             requirejs.manifest = {}
           end
 
