@@ -52,10 +52,10 @@ module Requirejs
            config["paths"] ||= {}
            
            modules = @config.module_names
-           require_paths = @config.require_paths
+           required_paths = @config.required_paths
            
            # filter out paths
-           config["paths"].select! {|mod,path| modules.include?(mod) || require_paths.include?(mod) || is_url?(path)}
+           config["paths"].select! {|mod,path| modules.include?(mod) || required_paths.include?(mod) || is_url?(path)}
         end
             
         if use_digest? 

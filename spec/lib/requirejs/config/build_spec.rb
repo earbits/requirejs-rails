@@ -2,22 +2,29 @@ require "requirejs/config/build"
 
 describe Requirejs::Config::Build do
   
-  subject(:config) do 
+  let(:config) do 
     Requirejs::Config::Build.new( { 
         "modules" => [{"name" => "mod1"}, {"name" => "mod2"}],
-        "shim" =>  "my shim"
+        "shim" =>  "my shim",
+        "follow_dependencies" => true,
+        "logical_asset_filter" =>  [/\.js$/,/\.html$/,/\.txt$/]
       },
       Pathname.new("/root")
     ) 
   end
 
-  its(:build_config) { should include("shim") }
+  specify { config.build_config.should include("shim") }
 
-  its(:module_names) { should eql %w{ mod1 mod2}}  
-  
 
+  specify { config.module_names.should eql %w{ mod1 mod2}}  
+  specify { config.follow_dependencies?.should be_true}
   
-  it "should return binding" do
-    config.get_binding.should_not be_nil
-  end
+  specify { config.get_binding.should_not be_nil }
+  
+  specify { config.paths.should_not be_nil}
+  specify { config.asset_allowed?("test.js").should be_true}
+  specify { config.asset_allowed?("test.doc").should be_false}
+  
+  specify { config.modules.should include(Requirejs::Config::Build::Module.new("mod1"))}
+  specify { config.modules.should include(Requirejs::Config::Build::Module.new("mod2"))}
 end

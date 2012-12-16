@@ -16,4 +16,11 @@ describe Requirejs::Rails::Config do
     its(:follow_dependencies) {should eql(false)}
     its(:include_paths) {should eql(true)}
   end
+  
+  let(:config) {Requirejs::Rails::Config.new}
+  
+  it "should allow follow dependencies to be set" do
+    config.follow_dependencies = true
+    config.follow_dependencies.should be_true
+  end
 end

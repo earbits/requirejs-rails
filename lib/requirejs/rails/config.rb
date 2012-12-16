@@ -2,6 +2,10 @@ require 'requirejs/rails'
 require 'requirejs/error'
 
 require 'requirejs/config/config_file'
+require 'requirejs/config/build'
+require 'requirejs/config/runtime'
+
+
 
 
 require 'active_support/ordered_options'
@@ -27,18 +31,16 @@ module Requirejs::Rails
 
 
     
-    def follow_dependencies=(val)
-      self[:follow_dependencies] = val
-    end
 
-    def build_config
+    def build
       
       @build_config ||= Requirejs::Config::Build.new(
                                 {
-                                  "baseUrl" =>  self.source_dir.to_s,
-                                  "modules" => [ { 'name' => 'application' } ]
-                              
-                                }.merge @config_file.config,
+                                  "modules" => [ { 'name' => 'application' } ],
+                                  "manifest_path" => self.manifest_path,
+                                  "follow_dependencies" => self.follow_dependencies,
+                                  "logical_asset_filter" => self.logical_asset_filter
+                                }.merge(@config_file.config),
                                 ::Rails.root 
                         )
     end
@@ -53,45 +55,14 @@ module Requirejs::Rails
 
 
 
-    def module_name_for(mod)
-   
-        return mod['name']
-    end
 
-    def module_path_for(mod)
-      self.target_dir+(module_name_for(mod)+'.js')
-    end
 
-    def module_names
-      self.build_config["modules"].map {|mod| mod["name"]}
-    end
-    
-    
-    
-    def get_binding
-      return binding()
-    end
-    
-    def source_path(path)
-      (self.source_dir + path).cleanpath
-    end
-
-    def asset_allowed?(asset)
-      self.logical_asset_filter.reduce(false) do |accum, matcher|
-        accum || (matcher =~ asset)
-      end ? true : false
-    end
-    
-   
-    
-
+    # def module_names
+    #       self.build_config["modules"].map {|mod| mod["name"]}
+    #     end
+    #     
     
  
-    
-    def include_paths?
-      self.include_paths
-    end
-    
 
     
     def script_tags(main_module, options = {}, &block)

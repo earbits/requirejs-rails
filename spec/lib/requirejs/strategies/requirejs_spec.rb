@@ -58,7 +58,7 @@ describe Requirejs::Strategies::Requirejs do
   
   it "should filter paths when include_paths? set to false" do
     Requirejs::Strategies::Requirejs.new(
-        stub("has_runtime_config?" => false, "include_paths?" => false, "require_paths" => [], runtime_config: {"paths" => {"sub_module" => "sub/module"}}, module_names: ["my_module"]), 
+        stub("has_runtime_config?" => false, "include_paths?" => false, "required_paths" => [], runtime_config: {"paths" => {"sub_module" => "sub/module"}}, module_names: ["my_module"]), 
           "my_module",{use_digest: true, compile: true}, asset_proc
           
       ).to_html.should include(
@@ -69,7 +69,7 @@ describe Requirejs::Strategies::Requirejs do
   
   it "should not filter paths when include_paths? set to false if path is url" do
     Requirejs::Strategies::Requirejs.new(
-        stub("has_runtime_config?" => false, "include_paths?" => false, "require_paths" => [], runtime_config: {"paths" => {"sub_module" => "http://my.com/modules"}}, module_names: ["my_module"]), 
+        stub("has_runtime_config?" => false, "include_paths?" => false, "required_paths" => [], runtime_config: {"paths" => {"sub_module" => "http://my.com/modules"}}, module_names: ["my_module"]), 
           "my_module",{use_digest: true, compile: true}, asset_proc
           
       ).to_html.should include(
@@ -81,7 +81,7 @@ describe Requirejs::Strategies::Requirejs do
   
   it "should not filter paths when include_paths? set to false if path is a required path" do
     Requirejs::Strategies::Requirejs.new(
-        stub("has_runtime_config?" => false, "include_paths?" => false, "require_paths" => ["sub_module"], runtime_config: {"paths" => {"sub_module" => "sub/module"}}, module_names: ["my_module"]), 
+        stub("has_runtime_config?" => false, "include_paths?" => false, "required_paths" => ["sub_module"], runtime_config: {"paths" => {"sub_module" => "sub/module"}}, module_names: ["my_module"]), 
           "my_module",{use_digest: true, compile: true}, asset_proc
           
       ).to_html.should include(

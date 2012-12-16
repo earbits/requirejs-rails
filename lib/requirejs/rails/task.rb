@@ -38,8 +38,8 @@ module Requirejs
           requirejs = ActiveSupport::OrderedOptions.new
 
           task :clean => ["requirejs:setup"] do
-            FileUtils.remove_entry_secure(requirejs.config.source_dir, true)
-            FileUtils.remove_entry_secure(requirejs.driver_path, true)
+            FileUtils.remove_entry_secure(requirejs.build_config.paths.source, true)
+            FileUtils.remove_entry_secure(requirejs.build_config.paths.driver, true)
           end
 
           task :setup => ["assets:environment"] do
@@ -56,7 +56,7 @@ module Requirejs
 
             # Preserve the original asset paths, as we'll be manipulating them later
             requirejs.env_paths = requirejs.env.paths.dup
-            requirejs.config = ::Rails.application.config.requirejs.build_config
+            requirejs.build_config = ::Rails.application.config.requirejs.build
             requirejs.builder = Requirejs::Rails::Builder.new(requirejs.build_config)
             requirejs.manifest = {}
           end
@@ -99,9 +99,9 @@ module Requirejs
             # copy all assets to tmp/assets
             task :prepare_source => ["requirejs:setup",
                                      "requirejs:clean"] do
-              requirejs.config.source_dir.mkpath
+              requirejs.build_config.paths.source.mkpath
       
-              if requirejs.config.follow_dependencies
+              if requirejs.build_config.follow_dependencies?
                 ## User depend_on and require directioves to identify 
                 ## assets to copy over as source
         
@@ -109,17 +109,17 @@ module Requirejs
                 builder = Requirejs::DependencyBuilder.new(adapter)
         
                 ## seed assets based off of module names
-                requirejs.config.module_names.each do |mod_name|
+                requirejs.build_config.module_names.each do |mod_name|
                   builder.include(mod_name + ".js")
                 end
       
                 ## copy assets
                 builder.each do |logical_path|
-                  next unless requirejs.config.asset_allowed?(logical_path)
+                  next unless requirejs.build_config.asset_allowed?(logical_path)
           
                   asset = adapter.find_asset(logical_path)  
           
-                  filename = requirejs.config.source_dir + asset.logical_path
+                  filename = requirejs.build_config.paths.source + asset.logical_path
                   filename.dirname.mkpath
                   asset.write_to(filename)
                 end
@@ -127,9 +127,9 @@ module Requirejs
               else
                 ## Copy all allowable assets as source
                 requirejs.env.each_logical_path do |logical_path|
-                  next unless requirejs.config.asset_allowed?(logical_path)
+                  next unless requirejs.build_config.asset_allowed?(logical_path)
                   if asset = requirejs.env.find_asset(logical_path)
-                    filename = requirejs.config.source_dir + asset.logical_path
+                    filename = requirejs.build_config.paths.source + asset.logical_path
                     filename.dirname.mkpath
                     asset.write_to(filename)
                   end
@@ -145,9 +145,9 @@ module Requirejs
 
             task :run_rjs => ["requirejs:setup",
                               "requirejs:test_node"] do
-              requirejs.config.target_dir.mkpath
+              requirejs.build_config.paths.target.mkpath
 
-              `node "#{requirejs.config.driver_path}"`
+              `node "#{requirejs.build_config.paths.driver}"`
               unless $?.success?
                 raise RuntimeError, "Asset compilation with node failed."
               end
@@ -156,11 +156,11 @@ module Requirejs
             # Copy each built asset, identified by a named module in the
             # build config, to its Sprockets digestified name.
             task :digestify_and_compress => ["requirejs:setup"] do
-              requirejs.config.build_config['modules'].each do |m|
-                asset_name = "#{requirejs.config.module_name_for(m)}.js"
-                built_asset_path = requirejs.config.target_dir + asset_name
+              requirejs.build_config.modules.each do |m|
+                asset_name = "#{m.name}.js"
+                built_asset_path = requirejs.build_config.paths.target + asset_name
                 digest_name = asset_name.sub(/\.(\w+)$/) { |ext| "-#{requirejs.builder.digest_for(built_asset_path)}#{ext}" }
-                digest_asset_path = requirejs.config.target_dir + digest_name
+                digest_asset_path = requirejs.build_config.paths.target + digest_name
                 requirejs.manifest[asset_name] = digest_name
                 FileUtils.cp built_asset_path, digest_asset_path
 
@@ -172,7 +172,7 @@ module Requirejs
                 end
                 FileUtils.cp "#{built_asset_path}.gz", "#{digest_asset_path}.gz"
 
-                requirejs.config.manifest_path.open('wb') do |f|
+                requirejs.build_config.manifest_path.open('wb') do |f|
                   YAML.dump(requirejs.manifest,f)
                 end
               end

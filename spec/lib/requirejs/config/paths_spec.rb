@@ -11,6 +11,7 @@ describe Requirejs::Config::Paths do
   
   specify { config_paths.driver.to_s.should eql("/root/tmp/rjs_driver.js") }
   
+  specify { config_paths.output_for("me.js").to_s.should eql("/root/public/assets/me.js") }
   
   
   describe "gem relative paths" do
