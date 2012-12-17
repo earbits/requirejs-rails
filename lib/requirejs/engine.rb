@@ -1,6 +1,6 @@
 
 require 'requirejs/rails/config'
-require 'requirejs/dependency_strategies/sprockets'
+require 'requirejs/dependency_builder'
 
 require 'requirejs/rails/helper'
 

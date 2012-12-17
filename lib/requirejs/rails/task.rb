@@ -3,6 +3,10 @@ require 'rake/tasklib'
 
 require 'requirejs/rails/builder'
 require 'requirejs/rails/config'
+require "requirejs/dependency_builder"
+require "requirejs/adapters/sprockets"
+require "requirejs/adapters/sprockets_amd"
+
 
 require 'fileutils'
 require 'pathname'
@@ -105,8 +109,8 @@ module Requirejs
                 ## User depend_on and require directioves to identify 
                 ## assets to copy over as source
         
-                adapter = Requirejs::DependencyStrategies::Sprockets::Adapter.new(requirejs.env)
-                builder = Requirejs::DependencyStrategies::Sprockets.new(adapter, requirejs.build_config)
+                adapter = Requirejs::Adapters::Sprockets.new(requirejs.env)
+                builder = Requirejs::DependencyBuilder.new(adapter, requirejs.build_config)
         
                 ## seed assets based off of module names
                 requirejs.build_config.module_names.each do |mod_name|
