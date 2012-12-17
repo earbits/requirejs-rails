@@ -7,9 +7,8 @@ class DependencyBuilder
     attr_reader :env
     attr_reader :cached_paths
 
-    def initialize(dependancy_adapter, config)
+    def initialize(dependancy_adapter)
       @env = dependancy_adapter
-      @config = config
       @cached_paths = Set.new
     end
 

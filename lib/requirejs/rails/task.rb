@@ -110,7 +110,7 @@ module Requirejs
                 ## assets to copy over as source
         
                 adapter = Requirejs::Adapters::Sprockets.new(requirejs.env)
-                builder = Requirejs::DependencyBuilder.new(adapter, requirejs.build_config)
+                builder = Requirejs::DependencyBuilder.new(adapter)
         
                 ## seed assets based off of module names
                 requirejs.build_config.module_names.each do |mod_name|
