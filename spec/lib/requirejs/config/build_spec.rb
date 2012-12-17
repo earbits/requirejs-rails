@@ -6,6 +6,7 @@ describe Requirejs::Config::Build do
     Requirejs::Config::Build.new( { 
         "modules" => [{"name" => "mod1"}, {"name" => "mod2"}],
         "shim" =>  "my shim",
+        "paths" => {"mapped_module" => "true_path"},
         "follow_dependencies" => true,
         "logical_asset_filter" =>  [/\.js$/,/\.html$/,/\.txt$/]
       },
@@ -27,4 +28,7 @@ describe Requirejs::Config::Build do
   
   specify { config.modules.should include(Requirejs::Config::Build::Module.new("mod1"))}
   specify { config.modules.should include(Requirejs::Config::Build::Module.new("mod2"))}
+  
+  specify { config.map_module_name("mapped_module").should eql("true_path") }
+  specify { config.map_module_name("unmapped_module").should eql("unmapped_module") }
 end

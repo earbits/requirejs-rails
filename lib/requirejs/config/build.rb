@@ -50,8 +50,12 @@ module Requirejs
         end ? true : false
       end
       
+      def config_paths
+        @config["paths"] || {}
+      end
       
-      def output_path_for_module(module_name)
+      def map_module_name(module_name)
+        config_paths[module_name] || module_name
       end
     
     end

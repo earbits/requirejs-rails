@@ -105,8 +105,8 @@ module Requirejs
                 ## User depend_on and require directioves to identify 
                 ## assets to copy over as source
         
-                adapter = Requirejs::DependencyBuilder::SprocketsAdapter.new(requirejs.env)
-                builder = Requirejs::DependencyBuilder.new(adapter)
+                adapter = Requirejs::DependencyStrategies::Sprockets::Adapter.new(requirejs.env)
+                builder = Requirejs::DependencyStrategies::Sprockets.new(adapter, requirejs.build_config)
         
                 ## seed assets based off of module names
                 requirejs.build_config.module_names.each do |mod_name|
@@ -116,7 +116,7 @@ module Requirejs
                 ## copy assets
                 builder.each do |logical_path|
                   next unless requirejs.build_config.asset_allowed?(logical_path)
-          
+       
                   asset = adapter.find_asset(logical_path)  
           
                   filename = requirejs.build_config.paths.source + asset.logical_path
