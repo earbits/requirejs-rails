@@ -109,7 +109,8 @@ module Requirejs
                 ## User depend_on and require directioves to identify 
                 ## assets to copy over as source
         
-                adapter = Requirejs::Adapters::Sprockets.new(requirejs.env)
+                #adapter = Requirejs::Adapters::Sprockets.new(requirejs.env)
+                adapter = Requirejs::Adapters::SprocketsAmd.new(requirejs.env, requirejs.build_config)
                 builder = Requirejs::DependencyBuilder.new(adapter)
         
                 ## seed assets based off of module names

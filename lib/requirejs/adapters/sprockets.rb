@@ -20,7 +20,7 @@ module Requirejs
 
 
         asset.send(:dependency_paths).map do |dependency_file|
-          logical_path_for(dependency_file) 
+          logical_path_for(dependency_file)
         end.compact
       end
 
