@@ -82,7 +82,8 @@ module Requirejs
             task :all => ["requirejs:precompile:prepare_source",
                           "requirejs:precompile:generate_rjs_driver",
                           "requirejs:precompile:run_rjs",
-                          "requirejs:precompile:digestify_and_compress"]
+                          "requirejs:precompile:digestify_and_compress",
+                          "requirejs:clean"]
 
             task :disable_js_compressor do
               # Ensure that Sprockets doesn't try to compress assets before they hit
